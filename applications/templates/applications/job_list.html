@@ -9,7 +9,9 @@
         {% for job in jobs %}
             <li>
                 <strong>{{ job.company }}</strong> - {{ job.role }} ({{ job.status }}) 
-                applied on {{ job.applied_date }}
+                applied on {{ job.applied_date }} 
+                | <a href="{% url 'edit_job' job.id %}">Edit</a>
+                | <a href="{% url 'delete_job' job.id %}">Delete</a>
             </li>
         {% empty %}
             <li>No job applications yet.</li>
