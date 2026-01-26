@@ -6,9 +6,9 @@
 <body>
     <h1>Add Job Application</h1>
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_table }}
+        {{ form.as_p }}
         <button type="submit">Add Job</button>
     </form>
 

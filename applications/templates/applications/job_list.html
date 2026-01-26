@@ -1,21 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Job Applications</title>
-</head>
-<body>
-    <h1>My Job Applications</h1>
-    <ul>
-        {% for job in jobs %}
-            <li>
-                <strong>{{ job.company }}</strong> - {{ job.role }} ({{ job.status }}) 
-                applied on {{ job.applied_date }} 
-                | <a href="{% url 'edit_job' job.id %}">Edit</a>
-                | <a href="{% url 'delete_job' job.id %}">Delete</a>
-            </li>
-        {% empty %}
-            <li>No job applications yet.</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends "applications/base.html" %}
+{% block title %}Job List{% endblock %}
+{% block content %}
+<h1>My Job Applications</h1>
+<ul>
+    {% for job in jobs %}
+        <li>{{ job.company }} - {{ job.role }} ({{ job.status }}) </li>
+        {% if job.resume %}
+    <a href="{{ job.resume.url }}">Download Resume</a>
+{% else %}
+    No resume
+{% endif %}
+    {% empty %}
+        <li>No job applications yet.</li>
+    {% endfor %}
+    
+</ul>
+{% endblock %}

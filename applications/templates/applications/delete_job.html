@@ -4,6 +4,13 @@
     <title>Delete Job</title>
 </head>
 <body>
+    {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
     <h1>Are you sure you want to delete {{ job.company }} - {{ job.role }}?</h1>
     <form method="POST">
         {% csrf_token %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import JobApplication
-from .forms import JobApplicationForm
+from .forms import JobApplicationForm, BookForm
 from django.contrib import messages
 
 # Create your views here.
@@ -15,7 +15,7 @@ def home(request):
 
 def add_job(request):
     if request.method == 'POST':
-        form = JobApplicationForm(request.POST)
+        form = JobApplicationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('job_list')
@@ -47,3 +47,26 @@ def delete_job(request, pk):
         messages.success(request, "Job deleted successfully!")
         return redirect('job_list')
     return render(request, 'applications/delete_job.html', {'job': job})
+
+
+def job_detail(request, pk):
+    job = get_object_or_404(JobApplication, pk=pk)
+    return render(request, 'applications/job_detail.html', {'job': job})
+
+
+def create_book_view(request):
+    # 1. Did the user click 'Submit'? (POST request)
+    if request.method == 'POST':
+        form = BookForm(request.POST) # Fill the form with the user's data
+        if form.is_valid():           # Django's built-in security & logic check
+            form.save()               # Saves directly to the Database!
+            return redirect('success') 
+            
+    # 2. User is just visiting the page (GET request)
+    else:
+        form = BookForm()             # Provide a blank form
+        
+    return render(request, 'applications/create_book.html', {'form': form})
+
+def success(request):
+    return render(request, 'applications/success.html')

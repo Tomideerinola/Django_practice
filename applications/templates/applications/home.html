@@ -4,6 +4,13 @@
     <title>Welcome to Job Tracker</title>
 </head>
 <body>
+    {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
     <h1>Welcome to Job Tracker</h1>
     <p>Your personal job application management system.</p>
     <h1>Django is working 🎉</h1>
