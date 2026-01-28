@@ -10,6 +10,13 @@ class JobApplication(models.Model):
     resume = models.FileField(upload_to='resumes/', blank=True, null=True)
     applied_date = models.DateField(auto_now_add=True)
 
+
+    class Meta:
+        permissions = [
+            ("can_mark_employed", "Can mark job as employed"),
+            ("can_approve_leave", "Can approve leave status"),
+        ]
+
     def __str__(self):
         return f"{self.company} - {self.role}"
     

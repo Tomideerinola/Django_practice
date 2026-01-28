@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_list_or_404, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from applications.models import JobApplication
 
 # Create your views here.
 def register(request):
@@ -37,3 +38,5 @@ def user_logout(request):
     logout(request)
     messages.success(request, "You have been logged out.")
     return redirect('login')
+
+

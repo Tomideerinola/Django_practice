@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,permission_required
 from .models import JobApplication
 from .forms import JobApplicationForm, BookForm
 from django.contrib import messages
@@ -35,6 +35,15 @@ def add_job(request):
         form = JobApplicationForm()
 
     return render(request, 'applications/add_job.html', {'form': form})
+
+
+@permission_required('applications.can_mark_employed', raise_exception=True)
+def mark_employed(request, pk):
+    job = get_object_or_404(JobApplication, pk=pk)
+    job.status = "Employed"
+    job.save()
+    messages.success(request, f"{job.company} marked as employed!")
+    return redirect('job_list')
 
 
 

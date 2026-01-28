@@ -12,5 +12,6 @@ urlpatterns = [
     path('books/', views.create_book_view, name='create_book_view'),
     path('thank-you/', views.success, name='success'),
     path('my/applications/', views.my_applications, name='my_applications'),
+    path('jobs/<int:pk>/mark-employed/', views.mark_employed, name='mark_employed'),  # our test URL
 
 ]
