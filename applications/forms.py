@@ -6,6 +6,20 @@ class JobApplicationForm(forms.ModelForm):
     class Meta:
         model = JobApplication
         fields = ['company', 'role', 'status', 'resume']
+        widgets = {
+            'company': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Company name'
+            }),
+            'role': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Job role'
+            }),
+            'status': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Application Status'
+            })
+        }
 
 
 class BookForm(forms.ModelForm):

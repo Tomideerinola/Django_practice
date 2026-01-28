@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .models import JobApplication
 from .forms import JobApplicationForm, BookForm
 from django.contrib import messages
 
 # Create your views here.
+@login_required
 def job_list(request):
     jobs = JobApplication.objects.all()  # get all jobs from the database
     return render(request, 'applications/job_list.html', {'jobs': jobs})
@@ -13,16 +15,26 @@ def home(request):
     return render(request, 'applications/home.html')
 
 
+@login_required
+def my_applications(request):
+    applications = JobApplication.objects.filter(user=request.user)
+    return render(request, "applications/list.html", {"applications": applications})
+
+
+
 def add_job(request):
     if request.method == 'POST':
         form = JobApplicationForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            job = form.save(commit=False)
+            job.user = request.user
+            job.save()
             return redirect('job_list')
     else:
         form = JobApplicationForm()
 
     return render(request, 'applications/add_job.html', {'form': form})
+
 
 
 

@@ -11,5 +11,6 @@ urlpatterns = [
     path('job/<int:pk>/view/', views.job_detail, name='job_detail'),
     path('books/', views.create_book_view, name='create_book_view'),
     path('thank-you/', views.success, name='success'),
-    
+    path('my/applications/', views.my_applications, name='my_applications'),
+
 ]
