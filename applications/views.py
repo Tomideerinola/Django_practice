@@ -7,7 +7,8 @@ from django.contrib import messages
 # Create your views here.
 @login_required
 def job_list(request):
-    jobs = JobApplication.objects.all()  # get all jobs from the database
+    # Only fetch jobs owned by this user
+    jobs = JobApplication.objects.filter(user=request.user)
     return render(request, 'applications/job_list.html', {'jobs': jobs})
 
 
@@ -39,21 +40,25 @@ def add_job(request):
 
 
 # --- EDIT JOB ---
+@login_required
 def edit_job(request, pk):
-    job = get_object_or_404(JobApplication, pk=pk)
+    # Only get the job if it belongs to the current user
+    job = get_object_or_404(JobApplication, pk=pk, user=request.user)
+
     if request.method == 'POST':
-        form = JobApplicationForm(request.POST, instance=job)
+        form = JobApplicationForm(request.POST, request.FILES, instance=job)
         if form.is_valid():
             form.save()
             messages.success(request, "Job updated successfully!")
             return redirect('job_list')
     else:
         form = JobApplicationForm(instance=job)
-    return render(request, 'applications/edit_job.html', {'form': form, 'job': job})
 
+    return render(request, 'applications/edit_job.html', {'form': form, 'job': job})
 # --- DELETE JOB ---
+@login_required
 def delete_job(request, pk):
-    job = get_object_or_404(JobApplication, pk=pk)
+    job = get_object_or_404(JobApplication, pk=pk, user=request.user)
     if request.method == 'POST':
         job.delete()
         messages.success(request, "Job deleted successfully!")

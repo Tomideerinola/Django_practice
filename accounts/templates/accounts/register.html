@@ -8,10 +8,24 @@
 <body>
     <h2>Create Account</h2>
 
-<form method="post">
+<!-- <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Register</button>
+</form> -->
+
+<form method="POST">
+    {% csrf_token %}
+    <label>Username</label>
+    {{ form.username }}
+    
+    <label>Password</label>
+    {{ form.password1 }}
+    
+    <label>Confirm Password</label>
+    {{ form.password2 }}
+    
+    <button type="submit">Register</button>
 </form>
 
 <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>

@@ -2,17 +2,27 @@
 {% block title %}Job List{% endblock %}
 {% block content %}
 <h1>My Job Applications</h1>
-<ul>
+<!-- <p><a href="{%url 'add_job'%}">Add new Job</a></p> -->
+<ul>   
+
     {% for job in jobs %}
-        <li>{{ job.company }} - {{ job.role }} ({{ job.status }}) </li>
+    <li>
+        <strong>{{ job.company }}</strong> - {{ job.role }} ({{ job.status }})
+        applied on {{ job.applied_date }}
+        {% if job.user == request.user %}
         {% if job.resume %}
-    <a href="{{ job.resume.url }}">Download Resume</a>
-{% else %}
-    No resume
-{% endif %}
-    {% empty %}
-        <li>No job applications yet.</li>
-    {% endfor %}
-    
+        <a href="{{ job.resume.url }}">Download Resume</a>
+    {% else %}
+        No resume
+    {% endif %}
+            <a href="{% url 'edit_job' job.pk %}">Edit</a>
+            <a href="{% url 'delete_job' job.pk %}">Delete</a>
+        {% endif %}
+    </li>
+{% empty %}
+    <li>No job applications yet.</li>
+    <p><a href="{%url 'add_job'%}">Add new Job</a></p>
+{% endfor %}
+
 </ul>
 {% endblock %}
