@@ -19,8 +19,8 @@
     <a href="{% url 'mark_employed' job.pk %}">Mark as Employed</a>
 {% endif %}
 
-            <a href="{% url 'edit_job' job.pk %}">Edit</a>
-            <a href="{% url 'delete_job' job.pk %}">Delete</a>
+            <a href="{% url 'job_edit_cbv' job.pk %}">Edit</a>
+            <a href="{% url 'job_delete_cbv' job.pk %}">Delete</a>
         {% endif %}
     </li>
 {% empty %}

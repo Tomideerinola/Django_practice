@@ -3,9 +3,12 @@ from django.contrib.auth.decorators import login_required,permission_required
 from .models import JobApplication
 from .forms import JobApplicationForm, BookForm
 from django.contrib import messages
-from django.views.generic import ListView,CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView,CreateView,UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.urls import reverse_lazy
+from django.views import View
+from django.core.paginator import Paginator
+from django.db.models import Q  # Needed for OR filtering
 
 
 
@@ -36,15 +39,96 @@ class JobCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
     
 
+# update job cbv 
+
+class JobUpdateView(LoginRequiredMixin, UpdateView):
+    model = JobApplication
+    form_class = JobApplicationForm
+    template_name = 'applications/edit_job.html'
+    success_url = reverse_lazy('job_list')
+
+    def get_queryset(self):
+        return JobApplication.objects.filter(user=self.request.user)
+
+    def form_valid(self, form):
+        messages.success(self.request, "Job updated successfully!")
+        return super().form_valid(form)
+    
+    # job delete cbv 
+
+class JobDeleteView(LoginRequiredMixin, DeleteView):
+    model = JobApplication
+    template_name = 'applications/delete_job.html'
+    success_url = reverse_lazy('job_list')
+
+    def get_queryset(self):
+        return JobApplication.objects.filter(user=self.request.user)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Job deleted successfully!")
+        return super().delete(request, *args, **kwargs)
+    
+
+# PermissionRequiredMixin cbv 
+
+class MarkEmployedView(PermissionRequiredMixin, View):
+    permission_required = 'applications.can_mark_employed'
+    raise_exception = True  # Optional: raises 403 if user doesn't have permission
+
+    def post(self, request, pk):
+        # Get the job, fail if doesn't exist
+        job = get_object_or_404(JobApplication, pk=pk)
+        job.status = 'Employed'
+        job.save()
+        messages.success(request, f"{job.company} marked as employed!")
+        return redirect('job_list')
 
 
 # FUNCTION BASED VIEWS 
-# Create your views here.
+# @login_required
+# def job_list(request):
+#     # Only fetch jobs owned by this user
+#     jobs = JobApplication.objects.filter(user=request.user)
+#     return render(request, 'applications/job_list.html', {'jobs': jobs})
+
+
+# @login_required
+# def job_list(request):
+#     jobs = JobApplication.objects.all().order_by('-applied_date')
+#     paginator = Paginator(jobs, 5)  # 5 jobs per page
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+#     query = request.GET.get('q')
+#     if query:
+#         jobs = jobs.filter(company__icontains=query) | jobs.filter(role__icontains=query)
+#     return render(request, 'applications/list.html', {'page_obj': page_obj, 'jobs': jobs})
+
+
 @login_required
 def job_list(request):
-    # Only fetch jobs owned by this user
-    jobs = JobApplication.objects.filter(user=request.user)
-    return render(request, 'applications/job_list.html', {'jobs': jobs})
+    # Get search query from GET params
+    query = request.GET.get('q', '')  
+
+    # Filter jobs if query exists, otherwise get all
+    if query:
+        jobs = JobApplication.objects.filter(Q(company__icontains=query) | Q(role__icontains=query)).order_by('-applied_date')
+    else:
+        jobs = JobApplication.objects.all().order_by('-applied_date')
+
+    # Paginate the queryset
+    paginator = Paginator(jobs, 5)  # 5 jobs per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Pass both page_obj and query for template
+    return render(
+        request,
+        'applications/list.html',
+        {
+            'page_obj': page_obj,  # paginated page
+            'query': query,        # current search term
+        }
+    )
 
 
 def home(request):
