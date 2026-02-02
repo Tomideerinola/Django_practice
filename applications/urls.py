@@ -1,6 +1,7 @@
 # applications/urls.py
 from django.urls import path
 from . import views
+from .views import JobListView, JobCreateView
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -13,5 +14,7 @@ urlpatterns = [
     path('thank-you/', views.success, name='success'),
     path('my/applications/', views.my_applications, name='my_applications'),
     path('jobs/<int:pk>/mark-employed/', views.mark_employed, name='mark_employed'),  # our test URL
+    path('jobcbv/', JobListView.as_view(), name='job_list'),
+    path('job/addcbv/', JobCreateView.as_view(), name='job_add_cbv'),
 
 ]

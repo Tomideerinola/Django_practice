@@ -3,7 +3,42 @@ from django.contrib.auth.decorators import login_required,permission_required
 from .models import JobApplication
 from .forms import JobApplicationForm, BookForm
 from django.contrib import messages
+from django.views.generic import ListView,CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
 
+
+
+# cbv  Class Based View for Job List
+
+class JobListView(LoginRequiredMixin, ListView):
+    model = JobApplication
+    template_name = 'applications/job_list.html'
+    context_object_name = 'jobs'
+
+    def get_queryset(self):
+        # ownership enforced
+        return JobApplication.objects.filter(user=self.request.user)
+    
+
+    
+# create job cbv 
+
+class JobCreateView(LoginRequiredMixin, CreateView):
+    model = JobApplication
+    form_class = JobApplicationForm
+    template_name = 'applications/add_job.html'
+    success_url = reverse_lazy('job_list')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, "Job added successfully!")
+        return super().form_valid(form)
+    
+
+
+
+# FUNCTION BASED VIEWS 
 # Create your views here.
 @login_required
 def job_list(request):
