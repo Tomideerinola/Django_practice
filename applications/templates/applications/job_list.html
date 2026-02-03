@@ -1,4 +1,6 @@
 {% extends "applications/base.html" %}
+{% load job_extras %}
+
 {% block title %}Job List{% endblock %}
 {% block content %}
 <h1>My Job Applications</h1>
@@ -8,6 +10,7 @@
     {% for job in jobs %}
     <li>
         <strong>{{ job.company }}</strong> - {{ job.role }} ({{ job.status }})
+        <span class="badge {{ job.status|status_badge }}">{{ job.status }}</span>
         applied on {{ job.applied_date }}
         {% if job.user == request.user %}
         {% if job.resume %}

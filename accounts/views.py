@@ -13,6 +13,9 @@ def register(request):
             form.save()
             messages.success(request, "Account created successfully. You can now log in.")
             return redirect('login')
+        else:
+            # 👇 THIS IS FOR DEBUGGING (VERY IMPORTANT)
+            print(form.errors)
     else:
         form = UserCreationForm()
 
@@ -32,6 +35,7 @@ def user_login(request):
         form = AuthenticationForm()
 
     return render(request, 'accounts/login.html', {'form': form})
+
 
 
 def user_logout(request):

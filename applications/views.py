@@ -111,9 +111,9 @@ def job_list(request):
 
     # Filter jobs if query exists, otherwise get all
     if query:
-        jobs = JobApplication.objects.filter(Q(company__icontains=query) | Q(role__icontains=query)).order_by('-applied_date')
+        jobs = JobApplication.objects.filter(user=request.user).filter(Q(company__icontains=query) | Q(role__icontains=query)).order_by('-applied_date')
     else:
-        jobs = JobApplication.objects.all().order_by('-applied_date')
+        jobs = JobApplication.objects.filter(user=request.user).order_by('-applied_date')
 
     # Paginate the queryset
     paginator = Paginator(jobs, 5)  # 5 jobs per page

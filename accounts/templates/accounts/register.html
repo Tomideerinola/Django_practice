@@ -15,6 +15,11 @@
 </form> -->
 
 <form method="POST">
+    {% if form.errors %}
+    <div style="color: red;">
+        {{ form.errors }}
+    </div>
+{% endif %}
     {% csrf_token %}
     <label>Username</label>
     {{ form.username }}
